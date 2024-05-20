@@ -105,7 +105,7 @@ async function handleAction(actionType) {
             body: JSON.stringify({
                 model: "gpt-4o",
                 messages: [
-                    { role: "system", content: "You are a helpful assistant that speaks Greek." },
+                    { role: "system", content: "You are a helpful assistant that speaks Greek. You provide only the greek text in plaintext without any escape sequences or anything alike." },
                     { role: "user", content: prompt }
                 ],
                 stream: true  // Enable streaming
