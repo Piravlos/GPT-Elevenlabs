@@ -45,6 +45,10 @@ input[type="text"], textarea {
     font-size: 14px;
 }
 
+textarea {
+    resize: none; /* Prevent resizing to maintain layout */
+}
+
 button {
     display: inline-block;
     background-color: #007bff;
