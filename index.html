@@ -2,51 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Translation</title>
-    <style>
-        .progress-bar {
-            width: 100%;
-            background-color: #f3f3f3;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            overflow: hidden;
-            display: none;
-        }
-        .progress-bar-inner {
-            height: 20px;
-            background-color: #4caf50;
-            width: 0%;
-            transition: width 0.2s;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+    <title>ElevenLabs TTS with GPT</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div>
-        <h1>Audio Translation Service</h1>
-        <form id="apiKeyForm">
-            <label for="apiKey">ElevenLabs API Key:</label>
-            <input type="text" id="apiKey" name="apiKey">
-            <button type="submit">Save API Key</button>
-        </form>
-        <form id="openAiKeyForm">
-            <label for="openAiKey">OpenAI API Key:</label>
-            <input type="text" id="openAiKey" name="openAiKey">
-            <button type="submit">Save API Key</button>
-        </form>
-        <button id="changeApiKeysButton" style="display:none;">Change API Keys</button>
-    </div>
-    <div id="apiInteraction" style="display:none;">
-        <textarea id="textToConvert" placeholder="Enter text here..."></textarea>
-        <button id="translateButton">Translate</button>
-        <button id="generateButton">Generate</button>
-        <div id="textOutput"></div>
-        <div class="progress-bar" id="progressBar">
-            <div class="progress-bar-inner"></div>
+    <div class="container">
+        <h1>GPGreek Translator</h1>
+        <div id="apiKeysSection">
+            <button id="changeApiKeysButton" style="display: none;">Change API Keys</button>
+            <form id="apiKeyForm" class="api-form" style="display: none;">
+                <label for="apiKey">Enter Your ElevenLabs API Key:</label>
+                <input type="text" id="apiKey" required>
+                <button type="submit">Save API Key</button>
+            </form>
+            <form id="openAiKeyForm" class="api-form" style="display: none;">
+                <label for="openAiKey">Enter Your OpenAI API Key:</label>
+                <input type="text" id="openAiKey" required>
+                <button type="submit">Save API Key</button>
+            </form>
         </div>
-        <audio id="audioOutput" controls></audio>
-        <button id="playButton">Play Audio</button>
-        <div id="audioReady" style="display: none;">Audio is ready. Please tap to play.</div>
+        <div id="apiInteraction" style="display: none;">
+            <label for="textToConvert">Enter Text:</label>
+            <textarea id="textToConvert" rows="5" cols="50"></textarea>
+            <div class="action-buttons">
+                <button id="translateButton" class="action-button translate">Translate to Greek</button>
+                <button id="generateButton" class="action-button generate">Generate Response in Greek</button>
+            </div>
+            <div id="progressBar" class="progress-bar" style="display: none;">
+                <div class="progress-bar-inner"></div>
+            </div>
+            <div id="outputContainer">
+                <label for="textOutput">Output Text:</label>
+                <div id="textOutput" class="output-box"></div>
+            </div>
+            <audio id="audioOutput" controls style="display: none;"></audio>
+            <button id="playButton">Play Audio</button>
+        </div>
+        <div id="loadingSpinner" style="display: none;">Loading...</div>
     </div>
     <script src="script.js"></script>
 </body>
