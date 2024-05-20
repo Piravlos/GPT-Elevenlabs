@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     checkBothKeys();
+    // Make sure the play button is always visible
+    document.getElementById('playButton').style.display = 'block';
 });
 
 document.getElementById('apiKeyForm').addEventListener('submit', function(event) {
@@ -20,6 +22,15 @@ document.getElementById('openAiKeyForm').addEventListener('submit', function(eve
 
 document.getElementById('changeApiKeysButton').addEventListener('click', function() {
     toggleApiKeysForm(true);
+});
+
+document.getElementById('playButton').addEventListener('click', function() {
+    const audioOutput = document.getElementById('audioOutput');
+    if (audioOutput.src) {
+        audioOutput.play();
+    } else {
+        alert('No audio available to play.');
+    }
 });
 
 function toggleApiKeysForm(show) {
