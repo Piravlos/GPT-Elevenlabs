@@ -107,7 +107,7 @@ async function handleAction(actionType) {
         attemptCount++;
         try {
             const prompt = actionType === 'translate' 
-                ? `Translate the following text to Greek: ${textToConvert}`
+                ? `Translate the following text to Greek(rewrite it if necessary to be meaningful): ${textToConvert}`
                 : `The user is asking a question in any language and you provide the response in Greek: ${textToConvert}`;
 
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
