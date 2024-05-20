@@ -93,6 +93,7 @@ async function handleAction(actionType) {
     progressBar.style.display = 'block';
     progressBarInner.style.width = '10%';
     loadingSpinner.style.display = 'block';
+    playButton.style.display = 'none'; // Hide play button initially
 
     // Call OpenAI API to translate or generate response in Greek
     try {
@@ -107,7 +108,7 @@ async function handleAction(actionType) {
                 'Authorization': `Bearer ${openAiKey}`
             },
             body: JSON.stringify({
-                model: "gpt-4o",
+                model: "gpt-4",
                 messages: [
                     { role: "system", content: "You are a helpful assistant that speaks Greek. You provide only the Greek response and only in plaintext (no html or markdown code, only plain text). ONLY PLAIN TEXT AND NOTHING ELSE" },
                     { role: "user", content: prompt }
@@ -178,21 +179,20 @@ async function handleAction(actionType) {
 
             // Wait for the audio to be fully loaded before attempting to play
             audioOutput.onloadedmetadata = () => {
+                console.log('Audio metadata loaded');
                 // Attempt to play the audio
                 const playPromise = audioOutput.play();
 
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
-                        // Audio played successfully
+                        console.log('Audio played successfully');
                     }).catch(error => {
-                        // Autoplay was prevented
                         console.log('Autoplay prevented:', error);
                         alert('Audio is ready. Please tap the play button to listen.');
-                        // Show a play button for user interaction
-                        playButton.style.display = 'block';
+                        playButton.style.display = 'block'; // Show play button if autoplay is prevented
                     });
                 } else {
-                    playButton.style.display = 'block';
+                    playButton.style.display = 'block'; // Show play button if no play promise
                 }
             };
 
@@ -216,5 +216,9 @@ async function handleAction(actionType) {
 // Play button handler
 document.getElementById('playButton').addEventListener('click', function() {
     const audioOutput = document.getElementById('audioOutput');
-    audioOutput.play();
+    audioOutput.play().then(() => {
+        console.log('Audio played after manual interaction');
+    }).catch(error => {
+        console.error('Error playing audio:', error);
+    });
 });
