@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElevenLabs TTS with GPT</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ElevenLabs Text-to-Speech with GPT</h1>
+        <form id="apiKeyForm" class="api-form">
+            <label for="apiKey">Enter Your ElevenLabs API Key:</label>
+            <input type="text" id="apiKey" required>
+            <button type="submit">Save API Key</button>
+        </form>
+        <form id="openAiKeyForm" class="api-form">
+            <label for="openAiKey">Enter Your OpenAI API Key:</label>
+            <input type="text" id="openAiKey" required>
+            <button type="submit">Save API Key</button>
+        </form>
+        <div id="apiInteraction" style="display: none;">
+            <label for="textToConvert">Enter Text:</label>
+            <textarea id="textToConvert" rows="5" cols="50"></textarea>
+            <div class="action-buttons">
+                <button id="translateButton" class="action-button translate">Translate to Greek</button>
+                <button id="generateButton" class="action-button generate">Generate Response in Greek</button>
+            </div>
+            <div id="progressBar" class="progress-bar" style="display: none;">
+                <div class="progress-bar-inner"></div>
+            </div>
+            <div id="outputContainer">
+                <label for="textOutput">Output Text:</label>
+                <textarea id="textOutput" rows="5" cols="50" readonly></textarea>
+            </div>
+            <audio id="audioOutput" controls></audio>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
