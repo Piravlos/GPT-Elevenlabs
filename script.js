@@ -126,7 +126,7 @@ async function handleAction(actionType) {
                 'Authorization': `Bearer ${openAiKey}`
             },
             body: JSON.stringify({
-                model: "gpt-4o",
+                model: "gpt-3.5-turbo",
                 messages: [
                     { role: "system", content: "You are a helpful assistant that speaks Greek. You provide only the Greek response and only in PLAINTEXT with no breaks or paragraphs as a single block of text." },
                     { role: "user", content: prompt }
@@ -145,18 +145,23 @@ async function handleAction(actionType) {
             done = doneReading;
             responseText += decoder.decode(value, { stream: !done });
             progressBarInner.style.width = '50%';
-        }
 
-        // Process the entire response text
-        console.log('OpenAI API response text:', responseText);
-        const parsedResponse = JSON.parse(responseText);
-        if (parsedResponse.choices && parsedResponse.choices.length > 0) {
-            translatedText = parsedResponse.choices[0].message.content;
-            translatedText = cleanResponse(translatedText);  // Clean the response
-            textOutput.innerText = translatedText;
-            console.log('Translated text:', translatedText);
-        } else {
-            throw new Error('Failed to get a valid response from OpenAI');
+            // Split the response text by newlines to process individual JSON objects
+            const responseParts = responseText.split('\n\n');
+            responseParts.forEach(part => {
+                if (part.trim()) {
+                    try {
+                        const parsedPart = JSON.parse(part.trim().replace(/^data: /, ''));
+                        if (parsedPart.choices && parsedPart.choices.length > 0) {
+                            translatedText += parsedPart.choices[0].delta.content || '';
+                            textOutput.innerText = translatedText;
+                            console.log('Streaming translated text:', translatedText);
+                        }
+                    } catch (error) {
+                        console.error('Error parsing JSON part:', part, error);
+                    }
+                }
+            });
         }
 
     } catch (error) {
