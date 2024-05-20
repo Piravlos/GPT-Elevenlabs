@@ -121,18 +121,26 @@ async function handleAction(actionType) {
             const decoder = new TextDecoder('utf-8');
             progressBarInner.style.width = '50%';
 
-            while (true) {
+            let doneReading = false;
+            while (!doneReading) {
                 const { done, value } = await reader.read();
-                if (done) break;
+                if (done) {
+                    doneReading = true;
+                } else {
+                    const chunk = decoder.decode(value);
+                    // Process chunk to extract the streamed text
+                    const regex = /"delta":{"content":"(.*?)"}/g;
+                    let match;
+                    while ((match = regex.exec(chunk)) !== null) {
+                        translatedText += match[1];
+                        translatedText = cleanResponse(translatedText);  // Clean the response
+                        textOutput.innerText = translatedText;
+                    }
 
-                const chunk = decoder.decode(value);
-                // Process chunk to extract the streamed text
-                const regex = /"delta":{"content":"(.*?)"}/g;
-                let match;
-                while ((match = regex.exec(chunk)) !== null) {
-                    translatedText += match[1];
-                    translatedText = cleanResponse(translatedText);  // Clean the response
-                    textOutput.innerText = translatedText;
+                    // Check for finish_reason in the chunk
+                    if (chunk.includes('"finish_reason":"stop"')) {
+                        doneReading = true;
+                    }
                 }
             }
         } else {
