@@ -130,3 +130,7 @@ button:hover {
     overflow-y: auto;
     box-sizing: border-box;
 }
+
+#playButton {
+    display: block; /* Ensure the play button is always visible */
+}
