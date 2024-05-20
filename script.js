@@ -220,5 +220,5 @@ document.getElementById('playButton').addEventListener('click', function() {
 // Function to clean the response
 function cleanResponse(text) {
     // Remove escape sequences and unwanted special characters (*, etc.)
-    return text.replace(/[\*\\]/g, '');
+    return text.replace(/[\*\\]/g, '').replace(/\\n/g, ' ').replace(/\\t/g, ' ').replace(/\\r/g, ' ');
 }
