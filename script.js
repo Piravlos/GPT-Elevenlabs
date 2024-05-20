@@ -105,7 +105,7 @@ async function handleAction(actionType) {
                 'Authorization': `Bearer ${openAiKey}`
             },
             body: JSON.stringify({
-                model: "gpt-4",
+                model: "gpt-4o",
                 messages: [
                     { role: "system", content: "You are a helpful assistant that speaks Greek. You provide only the Greek response and only in plaintext (no html or markdown code, only plain text). ONLY PLAIN TEXT AND NOTHING ELSE" },
                     { role: "user", content: prompt }
@@ -175,20 +175,23 @@ async function handleAction(actionType) {
             const audioOutput = document.getElementById('audioOutput');
             audioOutput.src = audioUrl;
 
-            // Attempt to play the audio
-            const playPromise = audioOutput.play();
+            // Wait for the audio to be fully loaded before attempting to play
+            audioOutput.onloadeddata = () => {
+                // Attempt to play the audio
+                const playPromise = audioOutput.play();
 
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    // Audio played successfully
-                }).catch(error => {
-                    // Autoplay was prevented
-                    console.log('Autoplay prevented:', error);
-                    alert('Audio is ready. Please tap the play button to listen.');
-                    // Show a play button for user interaction
-                    document.getElementById('playButton').style.display = 'block';
-                });
-            }
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // Audio played successfully
+                    }).catch(error => {
+                        // Autoplay was prevented
+                        console.log('Autoplay prevented:', error);
+                        alert('Audio is ready. Please tap the play button to listen.');
+                        // Show a play button for user interaction
+                        document.getElementById('playButton').style.display = 'block';
+                    });
+                }
+            };
 
             progressBarInner.style.width = '100%';
         } else {
