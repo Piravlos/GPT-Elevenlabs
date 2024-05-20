@@ -116,35 +116,26 @@ async function handleAction(actionType) {
             })
         });
 
-        if (response.ok) {
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder('utf-8');
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let done = false;
+        let responseText = '';
+
+        while (!done) {
+            const { value, done: doneReading } = await reader.read();
+            done = doneReading;
+            responseText += decoder.decode(value, { stream: !done });
             progressBarInner.style.width = '50%';
+        }
 
-            let doneReading = false;
-            while (!doneReading) {
-                const { done, value } = await reader.read();
-                if (done) {
-                    doneReading = true;
-                } else {
-                    const chunk = decoder.decode(value);
-                    // Process chunk to extract the streamed text
-                    const regex = /"delta":{"content":"(.*?)"}/g;
-                    let match;
-                    while ((match = regex.exec(chunk)) !== null) {
-                        translatedText += match[1];
-                        translatedText = cleanResponse(translatedText);  // Clean the response
-                        textOutput.innerText = translatedText;
-                    }
-
-                    // Check for finish_reason in the chunk
-                    if (chunk.includes('"finish_reason":"stop"')) {
-                        doneReading = true;
-                    }
-                }
-            }
+        // Process the entire response text
+        const parsedResponse = JSON.parse(responseText);
+        if (parsedResponse.choices && parsedResponse.choices.length > 0) {
+            translatedText = parsedResponse.choices[0].message.content;
+            translatedText = cleanResponse(translatedText);  // Clean the response
+            textOutput.innerText = translatedText;
         } else {
-            throw new Error('Failed to get a response from OpenAI');
+            throw new Error('Failed to get a valid response from OpenAI');
         }
 
     } catch (error) {
