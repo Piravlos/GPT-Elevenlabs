@@ -146,22 +146,27 @@ async function handleAction(actionType) {
             responseText += decoder.decode(value, { stream: !done });
             progressBarInner.style.width = '50%';
 
-            // Split the response text by newlines to process individual JSON objects
-            const responseParts = responseText.split('\n\n');
-            responseParts.forEach(part => {
-                if (part.trim()) {
+            // Process each chunk of data
+            const lines = responseText.split('\n\n');
+            for (const line of lines) {
+                if (line.trim().startsWith('data: ')) {
+                    const jsonStr = line.trim().substring(6);
+                    if (jsonStr === '[DONE]') {
+                        done = true;
+                        break;
+                    }
                     try {
-                        const parsedPart = JSON.parse(part.trim().replace(/^data: /, ''));
-                        if (parsedPart.choices && parsedPart.choices.length > 0) {
-                            translatedText += parsedPart.choices[0].delta.content || '';
+                        const json = JSON.parse(jsonStr);
+                        if (json.choices && json.choices[0] && json.choices[0].delta && json.choices[0].delta.content) {
+                            translatedText += json.choices[0].delta.content;
                             textOutput.innerText = translatedText;
                             console.log('Streaming translated text:', translatedText);
                         }
-                    } catch (error) {
-                        console.error('Error parsing JSON part:', part, error);
+                    } catch (e) {
+                        console.error('Error parsing JSON:', e);
                     }
                 }
-            });
+            }
         }
 
     } catch (error) {
