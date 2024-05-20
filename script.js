@@ -102,7 +102,7 @@ async function handleAction(actionType) {
                 let match;
                 while ((match = regex.exec(chunk)) !== null) {
                     translatedText += match[1];
-                    textOutput.value = translatedText;
+                    textOutput.innerHTML += match[1] + "<br>";
                 }
             }
         } else {
