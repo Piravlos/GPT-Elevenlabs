@@ -9,16 +9,19 @@
 <body>
     <div class="container">
         <h1>ElevenLabs Text-to-Speech with GPT</h1>
-        <form id="apiKeyForm" class="api-form">
-            <label for="apiKey">Enter Your ElevenLabs API Key:</label>
-            <input type="text" id="apiKey" required>
-            <button type="submit">Save API Key</button>
-        </form>
-        <form id="openAiKeyForm" class="api-form">
-            <label for="openAiKey">Enter Your OpenAI API Key:</label>
-            <input type="text" id="openAiKey" required>
-            <button type="submit">Save API Key</button>
-        </form>
+        <div id="apiKeysSection">
+            <button id="changeApiKeysButton" style="display: none;">Change API Keys</button>
+            <form id="apiKeyForm" class="api-form" style="display: none;">
+                <label for="apiKey">Enter Your ElevenLabs API Key:</label>
+                <input type="text" id="apiKey" required>
+                <button type="submit">Save API Key</button>
+            </form>
+            <form id="openAiKeyForm" class="api-form" style="display: none;">
+                <label for="openAiKey">Enter Your OpenAI API Key:</label>
+                <input type="text" id="openAiKey" required>
+                <button type="submit">Save API Key</button>
+            </form>
+        </div>
         <div id="apiInteraction" style="display: none;">
             <label for="textToConvert">Enter Text:</label>
             <textarea id="textToConvert" rows="5" cols="50"></textarea>
