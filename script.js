@@ -78,6 +78,7 @@ async function handleAction(actionType) {
     const progressBar = document.getElementById('progressBar');
     const progressBarInner = document.querySelector('.progress-bar-inner');
     const textOutput = document.getElementById('textOutput');
+    const loadingSpinner = document.getElementById('loadingSpinner');
 
     if (!apiKey || !openAiKey) {
         alert('Please enter both API keys first.');
@@ -86,9 +87,10 @@ async function handleAction(actionType) {
 
     let translatedText = "";
 
-    // Show progress bar
+    // Show progress bar and loading spinner
     progressBar.style.display = 'block';
     progressBarInner.style.width = '10%';
+    loadingSpinner.style.display = 'block';
 
     // Call OpenAI API to translate or generate response in Greek
     try {
@@ -103,9 +105,9 @@ async function handleAction(actionType) {
                 'Authorization': `Bearer ${openAiKey}`
             },
             body: JSON.stringify({
-                model: "gpt-4o",
+                model: "gpt-4",
                 messages: [
-                    { role: "system", content: "You are a helpful assistant that speaks Greek. You provide only the greek response and only in plaintext (no html or markdown code, only plain text). ONLY PLAIN TEXT AND NOTHING ELSE" },
+                    { role: "system", content: "You are a helpful assistant that speaks Greek. You provide only the Greek response and only in plaintext (no html or markdown code, only plain text). ONLY PLAIN TEXT AND NOTHING ELSE" },
                     { role: "user", content: prompt }
                 ],
                 stream: true  // Enable streaming
@@ -138,6 +140,7 @@ async function handleAction(actionType) {
         console.error('Error with OpenAI API:', error);
         alert('Failed to get a response from OpenAI');
         progressBar.style.display = 'none';
+        loadingSpinner.style.display = 'none';
         return;
     }
 
@@ -181,7 +184,9 @@ async function handleAction(actionType) {
                 }).catch(error => {
                     // Autoplay was prevented
                     console.log('Autoplay prevented:', error);
-                    alert('Audio is ready. Please tap to play.');
+                    alert('Audio is ready. Please tap the play button to listen.');
+                    // Show a play button for user interaction
+                    document.getElementById('playButton').style.display = 'block';
                 });
             }
 
@@ -193,10 +198,17 @@ async function handleAction(actionType) {
         console.error('Error fetching data from ElevenLabs:', error);
         alert('An error occurred while fetching data');
     } finally {
-        // Hide progress bar after a delay to show completion
+        // Hide progress bar and loading spinner after a delay to show completion
         setTimeout(() => {
             progressBar.style.display = 'none';
             progressBarInner.style.width = '0%';
+            loadingSpinner.style.display = 'none';
         }, 500);
     }
 }
+
+// Play button handler
+document.getElementById('playButton').addEventListener('click', function() {
+    const audioOutput = document.getElementById('audioOutput');
+    audioOutput.play();
+});
