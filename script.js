@@ -79,8 +79,6 @@ async function handleAction(actionType) {
     const progressBarInner = document.querySelector('.progress-bar-inner');
     const textOutput = document.getElementById('textOutput');
     const loadingSpinner = document.getElementById('loadingSpinner');
-    const audioOutput = document.getElementById('audioOutput');
-    const playButton = document.getElementById('playButton');
 
     if (!apiKey || !openAiKey) {
         alert('Please enter both API keys first.');
@@ -93,7 +91,6 @@ async function handleAction(actionType) {
     progressBar.style.display = 'block';
     progressBarInner.style.width = '10%';
     loadingSpinner.style.display = 'block';
-    playButton.style.display = 'none'; // Hide play button initially
 
     // Call OpenAI API to translate or generate response in Greek
     try {
@@ -110,7 +107,7 @@ async function handleAction(actionType) {
             body: JSON.stringify({
                 model: "gpt-4o",
                 messages: [
-                    { role: "system", content: "You are a helpful assistant that speaks Greek and provides concise answers. You provide only the Greek response and only in plaintext (no html or markdown code, only plain text). ONLY PLAIN TEXT AND NOTHING ELSE" },
+                    { role: "system", content: "You are a helpful assistant that speaks Greek. You provide only the Greek response and only in PLAINTEXT with no breaks or paragraphs as a single block of text." },
                     { role: "user", content: prompt }
                 ],
                 stream: true  // Enable streaming
@@ -160,7 +157,7 @@ async function handleAction(actionType) {
         model_id: "eleven_multilingual_v2",
         voice_settings: {
             stability: 0.5,
-            similarity_boost: 0.9,
+            similarity_boost: 0.8,
             use_speaker_boost: true  // Enable speaker boost
         }
     });
@@ -175,24 +172,24 @@ async function handleAction(actionType) {
         if (response.ok) {
             const blob = await response.blob();
             const audioUrl = URL.createObjectURL(blob);
+            const audioOutput = document.getElementById('audioOutput');
             audioOutput.src = audioUrl;
 
             // Wait for the audio to be fully loaded before attempting to play
-            audioOutput.onloadedmetadata = () => {
-                console.log('Audio metadata loaded');
+            audioOutput.onloadeddata = () => {
                 // Attempt to play the audio
                 const playPromise = audioOutput.play();
 
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
-                        console.log('Audio played successfully');
+                        // Audio played successfully
                     }).catch(error => {
+                        // Autoplay was prevented
                         console.log('Autoplay prevented:', error);
                         alert('Audio is ready. Please tap the play button to listen.');
-                        playButton.style.display = 'block'; // Show play button if autoplay is prevented
+                        // Show a play button for user interaction
+                        document.getElementById('playButton').style.display = 'block';
                     });
-                } else {
-                    playButton.style.display = 'block'; // Show play button if no play promise
                 }
             };
 
@@ -216,9 +213,5 @@ async function handleAction(actionType) {
 // Play button handler
 document.getElementById('playButton').addEventListener('click', function() {
     const audioOutput = document.getElementById('audioOutput');
-    audioOutput.play().then(() => {
-        console.log('Audio played after manual interaction');
-    }).catch(error => {
-        console.error('Error playing audio:', error);
-    });
+    audioOutput.play();
 });
