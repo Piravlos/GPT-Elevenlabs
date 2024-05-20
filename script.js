@@ -6,7 +6,6 @@ document.getElementById('apiKeyForm').addEventListener('submit', function(event)
     event.preventDefault();
     const apiKey = document.getElementById('apiKey').value;
     localStorage.setItem('apiKey', apiKey);
-    alert('ElevenLabs API Key saved securely!');
     checkBothKeys();
 });
 
@@ -14,7 +13,6 @@ document.getElementById('openAiKeyForm').addEventListener('submit', function(eve
     event.preventDefault();
     const openAiKey = document.getElementById('openAiKey').value;
     localStorage.setItem('openAiKey', openAiKey);
-    alert('OpenAI API Key saved securely!');
     checkBothKeys();
 });
 
@@ -83,7 +81,7 @@ async function handleAction(actionType) {
     const playButton = document.getElementById('playButton');
 
     if (!apiKey || !openAiKey) {
-        alert('Please enter both API keys first.');
+        console.error('API keys are missing.');
         return;
     }
 
@@ -93,7 +91,6 @@ async function handleAction(actionType) {
     progressBar.style.display = 'block';
     progressBarInner.style.width = '10%';
     loadingSpinner.style.display = 'block';
-    playButton.style.display = 'none'; // Hide play button initially
 
     // Call OpenAI API to translate or generate response in Greek
     try {
@@ -110,7 +107,7 @@ async function handleAction(actionType) {
             body: JSON.stringify({
                 model: "gpt-4o",
                 messages: [
-                    { role: "system", content: "You are a helpful assistant that speaks Greek and provides rather short reponses if possible. You provide only the Greek response and only in plaintext (no html or markdown code, only plain text). ONLY PLAIN TEXT AND NOTHING ELSE." },
+                    { role: "system", content: "You are a helpful assistant that speaks Greek and provides rather short responses. You provide only the Greek response and only in plaintext (no html or markdown code, only plain text). ONLY PLAIN TEXT AND NOTHING ELSE" },
                     { role: "user", content: prompt }
                 ],
                 stream: true  // Enable streaming
@@ -141,7 +138,6 @@ async function handleAction(actionType) {
 
     } catch (error) {
         console.error('Error with OpenAI API:', error);
-        alert('Failed to get a response from OpenAI');
         progressBar.style.display = 'none';
         loadingSpinner.style.display = 'none';
         return;
@@ -188,27 +184,23 @@ async function handleAction(actionType) {
                         console.log('Audio played successfully');
                     }).catch(error => {
                         console.log('Autoplay prevented:', error);
-                        alert('Audio is ready. Please tap the play button to listen.');
-                        playButton.style.display = 'block'; // Show play button if autoplay is prevented
                     });
-                } else {
-                    playButton.style.display = 'block'; // Show play button if no play promise
                 }
             };
 
             progressBarInner.style.width = '100%';
         } else {
-            alert('Failed to fetch data from ElevenLabs');
+            console.error('Failed to fetch data from ElevenLabs');
         }
     } catch (error) {
         console.error('Error fetching data from ElevenLabs:', error);
-        alert('An error occurred while fetching data');
     } finally {
-        // Hide progress bar and loading spinner after a delay to show completion
+        // Show play button and hide progress bar and loading spinner after a delay to show completion
         setTimeout(() => {
             progressBar.style.display = 'none';
             progressBarInner.style.width = '0%';
             loadingSpinner.style.display = 'none';
+            playButton.style.display = 'block'; // Always show play button
         }, 500);
     }
 }
