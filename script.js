@@ -78,7 +78,7 @@ async function handleAction(actionType) {
                 'Authorization': `Bearer ${openAiKey}`
             },
             body: JSON.stringify({
-                model: "gpt-4o",
+                model: "gpt-4",
                 messages: [
                     { role: "system", content: "You are a helpful assistant that speaks Greek." },
                     { role: "user", content: prompt }
