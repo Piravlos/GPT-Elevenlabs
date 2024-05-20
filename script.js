@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     checkBothKeys();
 });
 
+// Save ElevenLabs API Key
 document.getElementById('apiKeyForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const apiKey = document.getElementById('apiKey').value;
@@ -10,6 +11,7 @@ document.getElementById('apiKeyForm').addEventListener('submit', function(event)
     checkBothKeys();
 });
 
+// Save OpenAI API Key
 document.getElementById('openAiKeyForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const openAiKey = document.getElementById('openAiKey').value;
@@ -18,6 +20,7 @@ document.getElementById('openAiKeyForm').addEventListener('submit', function(eve
     checkBothKeys();
 });
 
+// Change API Keys Button
 document.getElementById('changeApiKeysButton').addEventListener('click', function() {
     toggleApiKeysForm(true);
 });
@@ -41,7 +44,6 @@ function toggleApiKeysForm(show) {
 function checkBothKeys() {
     const apiKey = localStorage.getItem('apiKey');
     const openAiKey = localStorage.getItem('openAiKey');
-    const changeApiKeysButton = document.getElementById('changeApiKeysButton');
 
     if (apiKey) {
         document.getElementById('apiKey').value = apiKey;
