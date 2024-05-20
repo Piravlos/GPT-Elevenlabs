@@ -18,9 +18,31 @@ document.getElementById('openAiKeyForm').addEventListener('submit', function(eve
     checkBothKeys();
 });
 
+document.getElementById('changeApiKeysButton').addEventListener('click', function() {
+    toggleApiKeysForm(true);
+});
+
+function toggleApiKeysForm(show) {
+    const apiKeyForm = document.getElementById('apiKeyForm');
+    const openAiKeyForm = document.getElementById('openAiKeyForm');
+    const changeApiKeysButton = document.getElementById('changeApiKeysButton');
+
+    if (show) {
+        apiKeyForm.style.display = 'block';
+        openAiKeyForm.style.display = 'block';
+        changeApiKeysButton.style.display = 'none';
+    } else {
+        apiKeyForm.style.display = 'none';
+        openAiKeyForm.style.display = 'none';
+        changeApiKeysButton.style.display = 'block';
+    }
+}
+
 function checkBothKeys() {
     const apiKey = localStorage.getItem('apiKey');
     const openAiKey = localStorage.getItem('openAiKey');
+    const changeApiKeysButton = document.getElementById('changeApiKeysButton');
+
     if (apiKey) {
         document.getElementById('apiKey').value = apiKey;
         document.getElementById('apiKey').disabled = true;
@@ -35,6 +57,9 @@ function checkBothKeys() {
     }
     if (apiKey && openAiKey) {
         document.getElementById('apiInteraction').style.display = 'block';
+        toggleApiKeysForm(false);
+    } else {
+        toggleApiKeysForm(true);
     }
 }
 
@@ -78,7 +103,7 @@ async function handleAction(actionType) {
                 'Authorization': `Bearer ${openAiKey}`
             },
             body: JSON.stringify({
-                model: "gpt-4o",
+                model: "gpt-4",
                 messages: [
                     { role: "system", content: "You are a helpful assistant that speaks Greek." },
                     { role: "user", content: prompt }
