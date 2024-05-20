@@ -110,7 +110,7 @@ async function handleAction(actionType) {
             body: JSON.stringify({
                 model: "gpt-4o",
                 messages: [
-                    { role: "system", content: "You are a helpful assistant that speaks Greek. You provide only the Greek response and only in plaintext (no html or markdown code, only plain text). ONLY PLAIN TEXT AND NOTHING ELSE" },
+                    { role: "system", content: "You are a helpful assistant that speaks Greek and provides concise answers. You provide only the Greek response and only in plaintext (no html or markdown code, only plain text). ONLY PLAIN TEXT AND NOTHING ELSE" },
                     { role: "user", content: prompt }
                 ],
                 stream: true  // Enable streaming
@@ -160,7 +160,7 @@ async function handleAction(actionType) {
         model_id: "eleven_multilingual_v2",
         voice_settings: {
             stability: 0.5,
-            similarity_boost: 0.8,
+            similarity_boost: 0.9,
             use_speaker_boost: true  // Enable speaker boost
         }
     });
