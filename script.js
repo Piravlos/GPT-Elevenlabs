@@ -171,9 +171,20 @@ async function handleAction(actionType) {
             const audioUrl = URL.createObjectURL(blob);
             const audioOutput = document.getElementById('audioOutput');
             audioOutput.src = audioUrl;
-            audioOutput.play().catch(() => {
-                alert('Audio is ready. Please tap to play.');
-            });
+
+            // Attempt to play the audio
+            const playPromise = audioOutput.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // Audio played successfully
+                }).catch(error => {
+                    // Autoplay was prevented
+                    console.log('Autoplay prevented:', error);
+                    alert('Audio is ready. Please tap to play.');
+                });
+            }
+
             progressBarInner.style.width = '100%';
         } else {
             alert('Failed to fetch data from ElevenLabs');
