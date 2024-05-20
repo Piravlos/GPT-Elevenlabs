@@ -1,33 +1,25 @@
 document.addEventListener('DOMContentLoaded', function() {
     checkBothKeys();
-    document.getElementById('playButton').style.display = 'block';  // Always show the play button
-    console.log('DOMContentLoaded: Initial setup completed');
 });
 
-// Save ElevenLabs API Key
 document.getElementById('apiKeyForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const apiKey = document.getElementById('apiKey').value;
     localStorage.setItem('apiKey', apiKey);
     alert('ElevenLabs API Key saved securely!');
-    console.log('ElevenLabs API Key saved:', apiKey);
     checkBothKeys();
 });
 
-// Save OpenAI API Key
 document.getElementById('openAiKeyForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const openAiKey = document.getElementById('openAiKey').value;
     localStorage.setItem('openAiKey', openAiKey);
     alert('OpenAI API Key saved securely!');
-    console.log('OpenAI API Key saved:', openAiKey);
     checkBothKeys();
 });
 
-// Change API Keys Button
 document.getElementById('changeApiKeysButton').addEventListener('click', function() {
     toggleApiKeysForm(true);
-    console.log('Change API Keys button clicked');
 });
 
 function toggleApiKeysForm(show) {
@@ -39,51 +31,44 @@ function toggleApiKeysForm(show) {
         apiKeyForm.style.display = 'block';
         openAiKeyForm.style.display = 'block';
         changeApiKeysButton.style.display = 'none';
-        console.log('API Key forms shown');
     } else {
         apiKeyForm.style.display = 'none';
         openAiKeyForm.style.display = 'none';
         changeApiKeysButton.style.display = 'block';
-        console.log('API Key forms hidden');
     }
 }
 
 function checkBothKeys() {
     const apiKey = localStorage.getItem('apiKey');
     const openAiKey = localStorage.getItem('openAiKey');
+    const changeApiKeysButton = document.getElementById('changeApiKeysButton');
 
     if (apiKey) {
         document.getElementById('apiKey').value = apiKey;
         document.getElementById('apiKey').disabled = true;
         document.querySelector('#apiKeyForm button').innerText = 'API Key Saved';
         document.querySelector('#apiKeyForm button').disabled = true;
-        console.log('ElevenLabs API Key found:', apiKey);
     }
     if (openAiKey) {
         document.getElementById('openAiKey').value = openAiKey;
         document.getElementById('openAiKey').disabled = true;
         document.querySelector('#openAiKeyForm button').innerText = 'API Key Saved';
         document.querySelector('#openAiKeyForm button').disabled = true;
-        console.log('OpenAI API Key found:', openAiKey);
     }
     if (apiKey && openAiKey) {
         document.getElementById('apiInteraction').style.display = 'block';
         toggleApiKeysForm(false);
-        console.log('Both API Keys are set');
     } else {
         toggleApiKeysForm(true);
-        console.log('One or both API Keys are missing');
     }
 }
 
 document.getElementById('translateButton').addEventListener('click', function() {
     handleAction('translate');
-    console.log('Translate button clicked');
 });
 
 document.getElementById('generateButton').addEventListener('click', function() {
     handleAction('generate');
-    console.log('Generate button clicked');
 });
 
 async function handleAction(actionType) {
@@ -94,17 +79,13 @@ async function handleAction(actionType) {
     const progressBarInner = document.querySelector('.progress-bar-inner');
     const textOutput = document.getElementById('textOutput');
     const loadingSpinner = document.getElementById('loadingSpinner');
-    const playButton = document.getElementById('playButton');
-    const audioOutput = document.getElementById('audioOutput');
 
     if (!apiKey || !openAiKey) {
         alert('Please enter both API keys first.');
-        console.log('Missing API keys');
         return;
     }
 
     let translatedText = "";
-    console.log('Starting action:', actionType);
 
     // Show progress bar and loading spinner
     progressBar.style.display = 'block';
@@ -116,8 +97,6 @@ async function handleAction(actionType) {
         const prompt = actionType === 'translate' 
             ? `Translate the following text to Greek: ${textToConvert}`
             : `The user is asking a question in any language and you provide the response in Greek: ${textToConvert}`;
-        
-        console.log('OpenAI API request prompt:', prompt);
 
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
@@ -126,47 +105,35 @@ async function handleAction(actionType) {
                 'Authorization': `Bearer ${openAiKey}`
             },
             body: JSON.stringify({
-                model: "gpt-4o",
+                model: "gpt-4",
                 messages: [
-                    { role: "system", content: "You are a helpful assistant that speaks Greek. You provide only the Greek response and only in PLAINTEXT with no breaks or paragraphs as a single block of text." },
+                    { role: "system", content: "You are a helpful assistant that speaks Greek. You provide only the Greek response and only in plaintext (no html or markdown code, only plain text). ONLY PLAIN TEXT AND NOTHING ELSE" },
                     { role: "user", content: prompt }
                 ],
                 stream: true  // Enable streaming
             })
         });
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder('utf-8');
-        let done = false;
-        let responseText = '';
-
-        while (!done) {
-            const { value, done: doneReading } = await reader.read();
-            done = doneReading;
-            responseText += decoder.decode(value, { stream: !done });
+        if (response.ok) {
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder('utf-8');
             progressBarInner.style.width = '50%';
 
-            // Process each chunk of data
-            const lines = responseText.split('\n\n');
-            for (const line of lines) {
-                if (line.trim().startsWith('data: ')) {
-                    const jsonStr = line.trim().substring(6);
-                    if (jsonStr === '[DONE]') {
-                        done = true;
-                        break;
-                    }
-                    try {
-                        const json = JSON.parse(jsonStr);
-                        if (json.choices && json.choices[0] && json.choices[0].delta && json.choices[0].delta.content) {
-                            translatedText += json.choices[0].delta.content;
-                            textOutput.innerText = translatedText;
-                            console.log('Streaming translated text:', translatedText);
-                        }
-                    } catch (e) {
-                        console.error('Error parsing JSON:', e);
-                    }
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value);
+                // Process chunk to extract the streamed text
+                const regex = /"delta":{"content":"(.*?)"}/g;
+                let match;
+                while ((match = regex.exec(chunk)) !== null) {
+                    translatedText += match[1];
+                    textOutput.innerText = translatedText;
                 }
             }
+        } else {
+            throw new Error('Failed to get a response from OpenAI');
         }
 
     } catch (error) {
@@ -194,8 +161,6 @@ async function handleAction(actionType) {
             use_speaker_boost: true  // Enable speaker boost
         }
     });
-
-    console.log('ElevenLabs API request body:', body);
     
     try {
         const response = await fetch(url, {
@@ -207,8 +172,8 @@ async function handleAction(actionType) {
         if (response.ok) {
             const blob = await response.blob();
             const audioUrl = URL.createObjectURL(blob);
+            const audioOutput = document.getElementById('audioOutput');
             audioOutput.src = audioUrl;
-            console.log('ElevenLabs API response received, audio URL:', audioUrl);
 
             // Wait for the audio to be fully loaded before attempting to play
             audioOutput.onloadeddata = () => {
@@ -218,11 +183,12 @@ async function handleAction(actionType) {
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
                         // Audio played successfully
-                        console.log('Audio played successfully');
                     }).catch(error => {
                         // Autoplay was prevented
                         console.log('Autoplay prevented:', error);
                         alert('Audio is ready. Please tap the play button to listen.');
+                        // Show a play button for user interaction
+                        document.getElementById('playButton').style.display = 'block';
                     });
                 }
             };
@@ -230,7 +196,6 @@ async function handleAction(actionType) {
             progressBarInner.style.width = '100%';
         } else {
             alert('Failed to fetch data from ElevenLabs');
-            console.log('Failed to fetch data from ElevenLabs');
         }
     } catch (error) {
         console.error('Error fetching data from ElevenLabs:', error);
@@ -249,11 +214,4 @@ async function handleAction(actionType) {
 document.getElementById('playButton').addEventListener('click', function() {
     const audioOutput = document.getElementById('audioOutput');
     audioOutput.play();
-    console.log('Play button clicked, audio playing');
 });
-
-// Function to clean the response
-function cleanResponse(text) {
-    // Remove escape sequences and unwanted special characters (*, etc.)
-    return text.replace(/[\*\\]/g, '').replace(/\\n/g, ' ').replace(/\\t/g, ' ').replace(/\\r/g, ' ');
-}
