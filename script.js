@@ -129,6 +129,7 @@ async function handleAction(actionType) {
                 let match;
                 while ((match = regex.exec(chunk)) !== null) {
                     translatedText += match[1];
+                    translatedText = cleanResponse(translatedText);  // Clean the response
                     textOutput.innerText = translatedText;
                 }
             }
@@ -215,3 +216,9 @@ document.getElementById('playButton').addEventListener('click', function() {
     const audioOutput = document.getElementById('audioOutput');
     audioOutput.play();
 });
+
+// Function to clean the response
+function cleanResponse(text) {
+    // Remove escape sequences and unwanted special characters (*, etc.)
+    return text.replace(/[\*\\]/g, '');
+}
