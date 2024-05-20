@@ -175,23 +175,20 @@ async function handleAction(actionType) {
             const audioOutput = document.getElementById('audioOutput');
             audioOutput.src = audioUrl;
 
-            // Wait for the audio to be fully loaded before attempting to play
-            audioOutput.onloadeddata = () => {
-                // Attempt to play the audio
-                const playPromise = audioOutput.play();
+            // Attempt to play the audio
+            const playPromise = audioOutput.play();
 
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        // Audio played successfully
-                    }).catch(error => {
-                        // Autoplay was prevented
-                        console.log('Autoplay prevented:', error);
-                        alert('Audio is ready. Please tap the play button to listen.');
-                        // Show a play button for user interaction
-                        document.getElementById('playButton').style.display = 'block';
-                    });
-                }
-            };
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // Audio played successfully
+                }).catch(error => {
+                    // Autoplay was prevented
+                    console.log('Autoplay prevented:', error);
+                    alert('Audio is ready. Please tap the play button to listen.');
+                    // Show a play button for user interaction
+                    document.getElementById('playButton').style.display = 'block';
+                });
+            }
 
             progressBarInner.style.width = '100%';
         } else {
