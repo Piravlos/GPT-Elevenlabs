@@ -192,8 +192,10 @@ async function handleAction(actionType) {
                 }).catch(error => {
                     // Autoplay was prevented
                     console.log('Autoplay prevented:', error);
-                    alert('Audio is ready. Please tap to play.');
+                    document.getElementById('audioReady').style.display = 'block'; // Show visual feedback
                 });
+            } else {
+                document.getElementById('audioReady').style.display = 'block'; // Show visual feedback
             }
 
             progressBarInner.style.width = '100%';
