@@ -79,6 +79,8 @@ async function handleAction(actionType) {
     const progressBarInner = document.querySelector('.progress-bar-inner');
     const textOutput = document.getElementById('textOutput');
     const loadingSpinner = document.getElementById('loadingSpinner');
+    const audioOutput = document.getElementById('audioOutput');
+    const playButton = document.getElementById('playButton');
 
     if (!apiKey || !openAiKey) {
         alert('Please enter both API keys first.');
@@ -172,11 +174,10 @@ async function handleAction(actionType) {
         if (response.ok) {
             const blob = await response.blob();
             const audioUrl = URL.createObjectURL(blob);
-            const audioOutput = document.getElementById('audioOutput');
             audioOutput.src = audioUrl;
 
             // Wait for the audio to be fully loaded before attempting to play
-            audioOutput.onloadeddata = () => {
+            audioOutput.onloadedmetadata = () => {
                 // Attempt to play the audio
                 const playPromise = audioOutput.play();
 
@@ -188,8 +189,10 @@ async function handleAction(actionType) {
                         console.log('Autoplay prevented:', error);
                         alert('Audio is ready. Please tap the play button to listen.');
                         // Show a play button for user interaction
-                        document.getElementById('playButton').style.display = 'block';
+                        playButton.style.display = 'block';
                     });
+                } else {
+                    playButton.style.display = 'block';
                 }
             };
 
