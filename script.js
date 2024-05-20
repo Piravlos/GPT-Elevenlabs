@@ -81,6 +81,8 @@ async function handleAction(actionType) {
     const progressBarInner = document.querySelector('.progress-bar-inner');
     const textOutput = document.getElementById('textOutput');
     const loadingSpinner = document.getElementById('loadingSpinner');
+    const playButton = document.getElementById('playButton');
+    const audioOutput = document.getElementById('audioOutput');
 
     if (!apiKey || !openAiKey) {
         alert('Please enter both API keys first.');
@@ -93,6 +95,7 @@ async function handleAction(actionType) {
     progressBar.style.display = 'block';
     progressBarInner.style.width = '10%';
     loadingSpinner.style.display = 'block';
+    playButton.style.display = 'none';  // Hide the play button initially
 
     // Call OpenAI API to translate or generate response in Greek
     try {
@@ -174,7 +177,6 @@ async function handleAction(actionType) {
         if (response.ok) {
             const blob = await response.blob();
             const audioUrl = URL.createObjectURL(blob);
-            const audioOutput = document.getElementById('audioOutput');
             audioOutput.src = audioUrl;
 
             // Wait for the audio to be fully loaded before attempting to play
@@ -190,7 +192,7 @@ async function handleAction(actionType) {
                         console.log('Autoplay prevented:', error);
                         alert('Audio is ready. Please tap the play button to listen.');
                         // Show a play button for user interaction
-                        document.getElementById('playButton').style.display = 'block';
+                        playButton.style.display = 'block';
                     });
                 }
             };
