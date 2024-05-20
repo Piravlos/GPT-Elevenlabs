@@ -18,7 +18,7 @@ body {
     padding: 20px;
     width: 100%;
     max-width: 600px;
-    height: 90vh; /* Fixed height to prevent resizing */
+    height: 90vh;
     box-sizing: border-box;
     overflow-y: auto;
 }
@@ -51,7 +51,7 @@ input[type="text"], textarea {
 }
 
 textarea {
-    height: auto; /* Prevents dynamic resizing */
+    height: auto;
 }
 
 button {
@@ -126,7 +126,7 @@ button:hover {
     color: #495057;
     overflow-wrap: break-word;
     white-space: pre-wrap;
-    height: 100px; /* Fixed height to prevent dynamic resizing */
+    height: 100px;
     overflow-y: auto;
     box-sizing: border-box;
 }
