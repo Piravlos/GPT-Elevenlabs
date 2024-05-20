@@ -166,7 +166,7 @@ async function handleAction(actionType) {
         attemptCount++;
         try {
             const voiceId = "cuab90umcstNgL8U7orz";  // Replace with actual voice ID
-            const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?optimize_streaming_latency=1`;  // Added latency optimization
+            const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`;  // Added latency optimization
             const headers = {
                 'Content-Type': 'application/json',
                 'xi-api-key': apiKey,
