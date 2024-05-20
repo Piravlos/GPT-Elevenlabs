@@ -154,7 +154,7 @@ async function handleAction(actionType) {
 
     // Call ElevenLabs API to convert the translated/generated text to speech
     const voiceId = "cuab90umcstNgL8U7orz";  // Replace with actual voice ID
-    const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?optimize_streaming_latency=3`;  // Added latency optimization
+    const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?optimize_streaming_latency=1`;  // Added latency optimization
     const headers = {
         'Content-Type': 'application/json',
         'xi-api-key': apiKey,
@@ -164,8 +164,8 @@ async function handleAction(actionType) {
         text: translatedText,
         model_id: "eleven_multilingual_v2",
         voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.8,
+            stability: 0.7,
+            similarity_boost: 0.9,
             use_speaker_boost: true  // Enable speaker boost
         }
     });
