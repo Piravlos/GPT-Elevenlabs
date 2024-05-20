@@ -69,7 +69,7 @@ async function handleAction(actionType) {
     try {
         const prompt = actionType === 'translate' 
             ? `Translate the following text to Greek: ${textToConvert}`
-            : `The user is asking a question in any language and you provide the response in native Greek (rewrite if necessary to sound natural): ${textToConvert}`;
+            : `The user is asking a question in any language and you provide the response in Greek: ${textToConvert}`;
 
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
@@ -78,9 +78,9 @@ async function handleAction(actionType) {
                 'Authorization': `Bearer ${openAiKey}`
             },
             body: JSON.stringify({
-                model: "gpt-4o",
+                model: "gpt-4",
                 messages: [
-                    { role: "system", content: "You are a helpful assistant that speaks native Greek and provides short answers. All answers in plain text without any escape characters." },
+                    { role: "system", content: "You are a helpful assistant that speaks Greek." },
                     { role: "user", content: prompt }
                 ],
                 stream: true  // Enable streaming
@@ -146,7 +146,9 @@ async function handleAction(actionType) {
             const audioUrl = URL.createObjectURL(blob);
             const audioOutput = document.getElementById('audioOutput');
             audioOutput.src = audioUrl;
-            audioOutput.play();
+            audioOutput.play().catch(() => {
+                alert('Audio is ready. Please tap to play.');
+            });
             progressBarInner.style.width = '100%';
         } else {
             alert('Failed to fetch data from ElevenLabs');
