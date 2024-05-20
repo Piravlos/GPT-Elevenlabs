@@ -102,8 +102,8 @@ async function handleAction(actionType) {
                 let match;
                 while ((match = regex.exec(chunk)) !== null) {
                     translatedText += match[1];
-                    textOutput.innerHTML += match[1] + "<br>";
                 }
+                textOutput.innerText = translatedText;
             }
         } else {
             throw new Error('Failed to get a response from OpenAI');
