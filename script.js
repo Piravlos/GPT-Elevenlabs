@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     checkBothKeys();
     document.getElementById('playButton').style.display = 'block';  // Always show the play button
+    console.log('DOMContentLoaded: Initial setup completed');
 });
 
 // Save ElevenLabs API Key
@@ -212,8 +213,6 @@ async function handleAction(actionType) {
                         // Autoplay was prevented
                         console.log('Autoplay prevented:', error);
                         alert('Audio is ready. Please tap the play button to listen.');
-                        // Show a play button for user interaction
-                        playButton.style.display = 'block';
                     });
                 }
             };
