@@ -166,7 +166,7 @@ async function handleAction(actionType) {
         attemptCount++;
         try {
             const voiceId = "rCog6MJ305VojjZbtGWQ";  // Replace with actual voice ID
-            const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`;  // Updated to streaming endpoint
+            const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`;
             const headers = {
                 'Content-Type': 'application/json',
                 'xi-api-key': apiKey,
@@ -174,13 +174,13 @@ async function handleAction(actionType) {
             };
             const body = JSON.stringify({
                 text: translatedText,
-                model_id: "eleven_turbo_v2",  // Updated to use the 2.5 turbo model
+                model_id: "eleven_turbo_v2",
                 voice_settings: {
                     stability: 0.7,
                     similarity_boost: 0.9,
                     use_speaker_boost: true
                 },
-                output_format: "mp3_44100_128"  // Specify the output format
+                output_format: "mp3_44100_128"
             });
 
             const response = await fetch(url, {
@@ -190,19 +190,30 @@ async function handleAction(actionType) {
             });
 
             if (response.ok) {
-                const reader = response.body.getReader();
-                const chunks = [];
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    chunks.push(value);
-                }
-
-                const blob = new Blob(chunks, { type: 'audio/mpeg' });
-                const audioUrl = URL.createObjectURL(blob);
                 const audioOutput = document.getElementById('audioOutput');
-                audioOutput.src = audioUrl;
+                
+                // Create a MediaSource
+                const mediaSource = new MediaSource();
+                audioOutput.src = URL.createObjectURL(mediaSource);
+
+                mediaSource.addEventListener('sourceopen', async () => {
+                    const sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
+                    const reader = response.body.getReader();
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+
+                        // Append the chunk to the source buffer
+                        sourceBuffer.appendBuffer(value);
+                    }
+
+                    sourceBuffer.addEventListener('updateend', () => {
+                        if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
+                            mediaSource.endOfStream();
+                        }
+                    });
+                });
 
                 // Attempt to play the audio
                 const playPromise = audioOutput.play();
