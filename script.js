@@ -174,7 +174,7 @@ async function handleAction(actionType) {
             };
             const body = JSON.stringify({
                 text: translatedText,
-                model_id: "eleven_turbo_v2_5",
+                model_id: "eleven_multilingual_v2",
                 voice_settings: {
                     stability: 0.7,
                     similarity_boost: 0.9,
