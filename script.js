@@ -166,7 +166,7 @@ async function handleAction(actionType) {
         attemptCount++;
         try {
             const voiceId = "cuab90umcstNgL8U7orz";  // Replace with actual voice ID
-            const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`;  // Added latency optimization
+            const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`;  // Updated to streaming endpoint
             const headers = {
                 'Content-Type': 'application/json',
                 'xi-api-key': apiKey,
@@ -174,12 +174,13 @@ async function handleAction(actionType) {
             };
             const body = JSON.stringify({
                 text: translatedText,
-                model_id: "eleven_turbo_v2_5",
+                model_id: "eleven_turbo_v2",  // Updated to use the 2.5 turbo model
                 voice_settings: {
                     stability: 0.7,
                     similarity_boost: 0.9,
-                    use_speaker_boost: true  // Enable speaker boost
-                }
+                    use_speaker_boost: true
+                },
+                output_format: "mp3_44100_128"  // Specify the output format
             });
 
             const response = await fetch(url, {
@@ -189,7 +190,16 @@ async function handleAction(actionType) {
             });
 
             if (response.ok) {
-                const blob = await response.blob();
+                const reader = response.body.getReader();
+                const chunks = [];
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    chunks.push(value);
+                }
+
+                const blob = new Blob(chunks, { type: 'audio/mpeg' });
                 const audioUrl = URL.createObjectURL(blob);
                 const audioOutput = document.getElementById('audioOutput');
                 audioOutput.src = audioUrl;
