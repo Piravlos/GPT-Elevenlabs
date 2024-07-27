@@ -117,7 +117,7 @@ async function handleAction(actionType) {
                     'Authorization': `Bearer ${openAiKey}`
                 },
                 body: JSON.stringify({
-                    model: "gpt-4o",
+                    model: "gpt-4o-mini",
                     messages: [
                         { role: "system", content: "You are a helpful assistant that speaks Greek. You provide only the Greek response and only in plaintext with no formatting and neither breaks. You just provide a single block of text. DO NOT PROVIDE A LIST. I WANT ONLY A SINGLE CONTINUOUS BLOCK OF TEXT FROM YOU." },
                         { role: "user", content: prompt }
