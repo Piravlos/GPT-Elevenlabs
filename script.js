@@ -165,7 +165,7 @@ async function handleAction(actionType) {
     while (attemptCount < maxRetries) {
         attemptCount++;
         try {
-            const voiceId = "cuab90umcstNgL8U7orz";  // Replace with actual voice ID
+            const voiceId = "rCog6MJ305VojjZbtGWQ";  // Replace with actual voice ID
             const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`;  // Updated to streaming endpoint
             const headers = {
                 'Content-Type': 'application/json',
