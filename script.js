@@ -165,7 +165,7 @@ async function handleAction(actionType) {
     while (attemptCount < maxRetries) {
         attemptCount++;
         try {
-            const voiceId = "pFZP5JQG7iQjIQuC4Bku";  // Replace with actual voice ID
+            const voiceId = "rCog6MJ305VojjZbtGWQ";  // Replace with actual voice ID
             const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`;  // Added latency optimization
             const headers = {
                 'Content-Type': 'application/json',
