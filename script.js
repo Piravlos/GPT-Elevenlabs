@@ -165,8 +165,8 @@ async function handleAction(actionType) {
     while (attemptCount < maxRetries) {
         attemptCount++;
         try {
-            const voiceId = "rCog6MJ305VojjZbtGWQ";  // Replace with actual voice ID
-            const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`;
+            const voiceId = "pFZP5JQG7iQjIQuC4Bku";  // Replace with actual voice ID
+            const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`;  // Added latency optimization
             const headers = {
                 'Content-Type': 'application/json',
                 'xi-api-key': apiKey,
@@ -174,13 +174,12 @@ async function handleAction(actionType) {
             };
             const body = JSON.stringify({
                 text: translatedText,
-                model_id: "eleven_turbo_v2",
+                model_id: "eleven_turbo_v2_5",
                 voice_settings: {
                     stability: 0.7,
                     similarity_boost: 0.9,
-                    use_speaker_boost: true
-                },
-                output_format: "mp3_44100_128"
+                    use_speaker_boost: true  // Enable speaker boost
+                }
             });
 
             const response = await fetch(url, {
@@ -190,30 +189,10 @@ async function handleAction(actionType) {
             });
 
             if (response.ok) {
+                const blob = await response.blob();
+                const audioUrl = URL.createObjectURL(blob);
                 const audioOutput = document.getElementById('audioOutput');
-                
-                // Create a MediaSource
-                const mediaSource = new MediaSource();
-                audioOutput.src = URL.createObjectURL(mediaSource);
-
-                mediaSource.addEventListener('sourceopen', async () => {
-                    const sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
-                    const reader = response.body.getReader();
-
-                    while (true) {
-                        const { done, value } = await reader.read();
-                        if (done) break;
-
-                        // Append the chunk to the source buffer
-                        sourceBuffer.appendBuffer(value);
-                    }
-
-                    sourceBuffer.addEventListener('updateend', () => {
-                        if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
-                            mediaSource.endOfStream();
-                        }
-                    });
-                });
+                audioOutput.src = audioUrl;
 
                 // Attempt to play the audio
                 const playPromise = audioOutput.play();
